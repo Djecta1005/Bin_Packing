@@ -1,0 +1,9 @@
+Type de linstance,Instance,Algorithme,Nombre dobjets,Nombre de bins,Temps déxécution,Paramètres
+Facile,N4C1W2_H,Best Fit,500,315,0.04026339999999973,/
+Facile,N4C1W2_H,Best Fit,500,315,0.07889240000000086,/
+Facile,N4C1W2_H,Best Fit,500,315,0.0427786999999995,/
+Facile,N4C1W2_H,Best Fit,500,315,0.06456260000000213,/
+Facile,N2C1W2_Q,Best Fit,100,65,0.001351799999994796,/
+Facile,N2C1W2_Q,First Fit,100,65,0.002123400000002107,/
+Difficile,HARD0,First Fit,200,59,0.0033760999999969954,/
+Difficile,HARD0,Best Fit,200,59,0.0024153999999896314,/
