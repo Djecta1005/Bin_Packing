@@ -41,47 +41,71 @@ exacts = {
     "N4W4B3R9":56
  
 }
-Fonctionnalite = st.sidebar.selectbox(
-    'Sélectionner une fonctionnalité',
-    ('Exécution', 'Historique', 'Comparaison')
+Problem = st.sidebar.selectbox(
+    'Sélectionner un problème à résoudre',
+    ('Bin Packing', 'Clustering')
 )
-st.write(f"""# {Fonctionnalite} """)
-if Fonctionnalite=='Exécution':
-    dataset_type = st.sidebar.selectbox(
-        'Sélectionner le type du Dataset',
-        ('Facile', 'Normal', 'Difficile','Spéciales Méthode Exacte')
+st.write(f"""# {Problem} """)
+if Problem=='Bin Packing':
+    Fonctionnalite = st.sidebar.selectbox(
+        'Sélectionner une fonctionnalité',
+        ('Exécution', 'Historique', 'Comparaison')
     )
-    if dataset_type=='Facile':
-        dataset_name = st.sidebar.selectbox(
-            'Sélectionner une instance facile',
-            ('N4C1W2_H', 'N4C3W1_A', 'N3C1W1_A','N3C3W1_A','N2C1W2_Q','N2C3W1_A','N1C1W1_R','N1C3W1_A')
+    st.write(f"""# {Fonctionnalite} """)
+    if Fonctionnalite=='Exécution':
+        dataset_type = st.sidebar.selectbox(
+            'Sélectionner le type du Dataset',
+            ('Facile', 'Normal', 'Difficile','Spéciales Méthode Exacte')
         )
-    elif dataset_type=='Normal':
-        dataset_name = st.sidebar.selectbox(
-            'Sélectionner une instance normale',
-            ('N4W1B1R0', 'N4W4B3R9', 'N3W1B1R0','N3W4B1R0','N2W1B1R0','N2W4B3R0','N1W1B1R0', 'N4W4B3R9')
-        )
-    elif dataset_type=='Difficile':
-        dataset_name = st.sidebar.selectbox(
-            'Sélectionner une instance difficile',
-            ('HARD0', 'HARD2', 'Falkenauer_u1000_00','Falkenauer_u1000_19')
-        )
-    elif dataset_type=='Spéciales Méthode Exacte':
-        dataset_name = st.sidebar.selectbox(
-            'Sélectionner une instance aléatoire',
-            ('ins5','ins7','ins10','ins12','ins14','ins18','ins20')
-        )
+        if dataset_type=='Facile':
+            dataset_name = st.sidebar.selectbox(
+                'Sélectionner une instance facile',
+                ('N4C1W2_H', 'N4C3W1_A', 'N3C1W1_A','N3C3W1_A','N2C1W2_Q','N2C3W1_A','N1C1W1_R','N1C3W1_A')
+            )
+        elif dataset_type=='Normal':
+            dataset_name = st.sidebar.selectbox(
+                'Sélectionner une instance normale',
+                ('N4W1B1R0', 'N4W4B3R9', 'N3W1B1R0','N3W4B1R0','N2W1B1R0','N2W4B3R0','N1W1B1R0', 'N4W4B3R9')
+            )
+        elif dataset_type=='Difficile':
+            dataset_name = st.sidebar.selectbox(
+                'Sélectionner une instance difficile',
+                ('HARD0', 'HARD2', 'Falkenauer_u1000_00','Falkenauer_u1000_19')
+            )
+        elif dataset_type=='Spéciales Méthode Exacte':
+            dataset_name = st.sidebar.selectbox(
+                'Sélectionner une instance aléatoire',
+                ('ins5','ins7','ins10','ins12','ins14','ins18','ins20')
+            )
 
-    st.write(f"## {dataset_type} Dataset : Instance {dataset_name} ")
+        st.write(f"## {dataset_type} Dataset : Instance {dataset_name} ")
 
-    algo_name = st.sidebar.selectbox(
-        'Selectionner l''algorithme',
-        ('Best Fit', 'Best Fit Decreasing', 'Worst Fit','Next Fit', 'First Fit', 'First Fit Decreasing','Branch and Bound L','Branch and Bound P','Genetic Algorithm','Simulated Annealing' )
+        algo_name = st.sidebar.selectbox(
+            'Selectionner l''algorithme',
+            ('Best Fit', 'Best Fit Decreasing', 'Worst Fit','Next Fit', 'First Fit', 'First Fit Decreasing','Branch and Bound L','Branch and Bound P','Genetic Algorithm','Simulated Annealing' )
+        )
+        st.write(f"## {algo_name} Algorithme")
+else:
+    name = st.sidebar.selectbox(
+        'Choisir le dataset',
+        ('Iris', 'Heart Disease')
     )
-    st.write(f"## {algo_name} Algorithme")
+    methode = st.sidebar.selectbox(
+        'Choisir la méthode à éxécuter',
+        ('Recuit Simulé', 'K-means')
+    )
+    if methode=='Recuit Simulé':
+        init = st.sidebar.selectbox(
+            'Choisir la solution initiale',
+            ('Aléatoire', 'K-means')
+        )
 
 def get_dataset(name):
     data = None
+    if name=='Iris':
+        data = pd.read_csv("dataset/iris.csv")
+    if name=='Heart Disease':
+        data = pd.read_csv("dataset/heart.csv")
     if name == 'ins5':
         data =  open("instances/tres_facile/ins5.txt","r")
     elif name == 'ins7':
@@ -642,8 +666,6 @@ def tournament_selection(population, tournament_selection_probability, k):
     while ind >= k:
         ind = int(np.random.geometric(tournament_selection_probability, 1))
     return candidates[ind]
-    
-    
 def roulette_wheel_selection(population):
     max = sum([len(e.fitness) for e in population])
     pick = uniform(0, max)
@@ -652,8 +674,6 @@ def roulette_wheel_selection(population):
         current -= len(item.fitness)
         if current < pick:
             return item
-            
-            
 def SUS(population, n):
     selected = []
     pointers = []
@@ -669,8 +689,6 @@ def SUS(population, n):
             if current > pointer:
                 selected.append(item)
     return selected
-
-
 def rank_selection(population):
     length = len(population)
     rank_sum = length * (length + 1) / 2
@@ -682,7 +700,6 @@ def rank_selection(population):
         if current > pick:
             return item
         i -= 1
-
 #______________________________Crossover____________________________
 def crossover(parent1, parent2):
     taken = [False] * len(parent1)
@@ -699,7 +716,6 @@ def crossover(parent1, parent2):
             taken[element.id] = True
         i += 1
     return child
-    
 #______________________________________Mutation_____________________
 def mutation(member, capacity, greedy_solver):
     member_items = member.items
@@ -712,8 +728,6 @@ def mutation(member, capacity, greedy_solver):
     member_items[b] = c
     member = Candidate(member_items, fitness(member_items, capacity, greedy_solver))
     return member
-    
-    
 #______________________________________Genetic Algorithm________________
 def genetic_algorithm(weights, capacity, population_size=50, generations=250, max_no_change=50,k=20, tournament_selection_probability=0.7, crossover_probability=0.6, mutation_probability=0.3, greedy_solver="FF", allow_duplicate_parents=False, selection_method="RW"):
     time = timeit.default_timer()
@@ -782,7 +796,6 @@ def genetic_algorithm(weights, capacity, population_size=50, generations=250, ma
     #print("iterations number ",current_iteration,"stagnation: ", num_no_change)
     time = timeit.default_timer()-time
     return len(best_solution), time
-    
 ###################RS##########################
 #Classe Objet
 class Objet:
@@ -790,7 +803,7 @@ class Objet:
         self.size = size
     def get_size(self):
         return self.size
-    
+
 #Classe Bin'''
 class Boite:
     def __init__(self, capacity):
@@ -915,220 +928,241 @@ class RS(object):
                 s += item.size
             S = ( S + s ** 2 )
         return S
-###########Exuction#####################"
-if Fonctionnalite =='Exécution':
-    XT= get_dataset(dataset_name)
-    lignes = XT.readlines()
-    n=int(lignes[0])
-    c=int(lignes[1])
-    weight = [ int(x) for x in lignes[2:len(lignes)] ]
-    weight=np.asarray(weight)
-    #st.write('Shape of dataset:', lignes.shape(0))
-    #st.write(lignes)
-    #print(weight)
-    st.write('Bin capacity : ', c)
-    st.write('Number ob objects :', n)
-    st.write('Solution exacte :',exacts[dataset_name])
-    #l = bestFit(weight, n, c)
-    #temps_debut = timeit.default_timer()
-    A,duree = get_algo(algo_name,weight,n,c)
-    #duree = timeit.default_timer() - temps_debut
-    with open('historique.csv','a',newline='',encoding='utf-8') as fichiercsv:
-        writer=csv.writer(fichiercsv)
-        writer.writerow([dataset_type,dataset_name, algo_name,n, A, duree, '/'])
-    st.write('Number of bins required : ', A)
-    st.write('Temps d''éxécution : ', duree)
-##################Historique###########################"
-if Fonctionnalite=='Historique':
-    r = pd.read_csv("historique.csv",encoding = "ISO-8859-1" )
-    st.write(r)
+##################################BIN PACKING####################################"
+if Problem=='Bin Packing':
 
-###########Comparaison###########################"
-if Fonctionnalite == 'Comparaison':
-    comparaison_types = st.sidebar.selectbox(
-    'Selectionner les méthodes',
-    ('Méthode exacte','Méthodes heuristiques', 'Métaheuristique', 'Heuristiques Vs Métaheuristique'))
-    if comparaison_types=='Méthode exacte':
-        st.write(" ")
-        st.write(" ")
-        st.write("#### Temps d'éxéctuion Branch And Bound")
-        st.write(" ")
-        st.write(" ")
-        df = pd.read_csv("Temps_Exec_BranchAndBound.csv", encoding="ISO-8859-1")
-        instances = df['instances']
-        y= df.iloc[:, 1]
-        fig, ax = plt.subplots(figsize=(20, 5))
-        ax.plot(instances, y, label='Branch and Bound')
+    ###########Exuction#####################"
+    if Fonctionnalite =='Exécution':
+        XT= get_dataset(dataset_name)
+        lignes = XT.readlines()
+        n=int(lignes[0])
+        c=int(lignes[1])
+        weight = [ int(x) for x in lignes[2:len(lignes)] ]
+        weight=np.asarray(weight)
+        #st.write('Shape of dataset:', lignes.shape(0))
+        #st.write(lignes)
+        #print(weight)
+        st.write('Bin capacity : ', c)
+        st.write('Number ob objects :', n)
+        st.write('Solution exacte :',exacts[dataset_name])
+        #l = bestFit(weight, n, c)
+        #temps_debut = timeit.default_timer()
+        A,duree = get_algo(algo_name,weight,n,c)
+        #duree = timeit.default_timer() - temps_debut
+        with open('historique.csv','a',newline='',encoding='utf-8') as fichiercsv:
+            writer=csv.writer(fichiercsv)
+            writer.writerow([dataset_type,dataset_name, algo_name,n, A, duree, '/'])
+        st.write('Number of bins required : ', A)
+        st.write('Temps d''éxécution : ', duree)
+    ##################Historique###########################"
+    if Fonctionnalite=='Historique':
+        r = pd.read_csv("historique.csv",encoding = "ISO-8859-1" )
+        st.write(r)
 
-        ax.legend()
-        plt.xlabel('Instances')
-        # naming the y-axis
-        plt.ylabel('Temps dexécution')
-        plt.legend()
+    ###########Comparaison###########################"
+    if Fonctionnalite == 'Comparaison':
+        comparaison_types = st.sidebar.selectbox(
+        'Selectionner les méthodes',
+        ('Méthode exacte','Méthodes heuristiques', 'Métaheuristique', 'Heuristiques Vs Métaheuristique'))
+        if comparaison_types=='Méthode exacte':
+            st.write(" ")
+            st.write(" ")
+            st.write("#### Temps d'éxéctuion Branch And Bound")
+            st.write(" ")
+            st.write(" ")
+            df = pd.read_csv("Temps_Exec_BranchAndBound.csv", encoding="ISO-8859-1")
+            instances = df['instances']
+            y= df.iloc[:, 1]
+            fig, ax = plt.subplots(figsize=(20, 5))
+            ax.plot(instances, y, label='Branch and Bound')
 
-        plt.show()
-        st.pyplot()
-    ############# 1-  Comparaison de la solution des heuristiques
-    if comparaison_types=='Méthodes heuristiques':
-        st.write(" ")
-        st.write(" ")
-        st.write("#### Comparaison des solutions des heuristiques et de la solution exacte")
-        st.write(" ")
-        st.write(" ")
-        col_names = ["FF", "FFD","BF","BFD","NF","WF","Solution_Exacte"]
-        df = pd.read_csv("NB_bin_heuristique.csv", encoding="ISO-8859-1")
+            ax.legend()
+            plt.xlabel('Instances')
+            # naming the y-axis
+            plt.ylabel('Temps dexécution')
+            plt.legend()
 
-        fig, ax = plt.subplots(figsize=(20, 5))
-        # The x-values of the bars.
-        instances = df['instances']
-        x = np.arange(len(instances))
+            plt.show()
+            st.pyplot()
+        ############# 1-  Comparaison de la solution des heuristiques
+        if comparaison_types=='Méthodes heuristiques':
+            st.write(" ")
+            st.write(" ")
+            st.write("#### Comparaison des solutions des heuristiques et de la solution exacte")
+            st.write(" ")
+            st.write(" ")
+            col_names = ["FF", "FFD","BF","BFD","NF","WF","Solution_Exacte"]
+            df = pd.read_csv("NB_bin_heuristique.csv", encoding="ISO-8859-1")
 
-        # The width of the bars (1 = the whole width of the 'year group')
-        width = 0.10
+            fig, ax = plt.subplots(figsize=(20, 5))
+            # The x-values of the bars.
+            instances = df['instances']
+            x = np.arange(len(instances))
 
-        # Create the bar charts!
-        ax.bar(x - 3 * width / 2, df['FF'], width, label='FF', color='#0343df')
-        ax.bar(x - width / 2, df['FFD'], width, label='FFD', color='#e50000')
-        ax.bar(x + width / 2, df['BF'], width, label='BF', color='#ffff14')
-        ax.bar(x + 3 * width / 2, df['BFD'], width, label='BFD', color='#929591')
-        ax.bar(x - 5 * width / 2, df['NF'], width, label='NF', color='#00FF23')
-        ax.bar(x + 5 * width / 2, df['WF'], width, label='WF', color='#FF00F0')
-        ax.bar(x - 7 * width / 2, df['SE'], width, label='SE', color='#FF8000')
-        # Notice that features like labels and titles are added in separate steps
-        ax.set_ylabel('Nombre de bins')
-        ax.set_title('Solutions des heuristiques')
+            # The width of the bars (1 = the whole width of the 'year group')
+            width = 0.10
 
-        ax.set_xticks(x)  # This ensures we have one tick per year, otherwise we get fewer
-        ax.set_xticklabels(instances.astype(str).values, rotation='vertical')
-        st.set_option('deprecation.showPyplotGlobalUse', False)
+            # Create the bar charts!
+            ax.bar(x - 3 * width / 2, df['FF'], width, label='FF', color='#0343df')
+            ax.bar(x - width / 2, df['FFD'], width, label='FFD', color='#e50000')
+            ax.bar(x + width / 2, df['BF'], width, label='BF', color='#ffff14')
+            ax.bar(x + 3 * width / 2, df['BFD'], width, label='BFD', color='#929591')
+            ax.bar(x - 5 * width / 2, df['NF'], width, label='NF', color='#00FF23')
+            ax.bar(x + 5 * width / 2, df['WF'], width, label='WF', color='#FF00F0')
+            ax.bar(x - 7 * width / 2, df['SE'], width, label='SE', color='#FF8000')
+            # Notice that features like labels and titles are added in separate steps
+            ax.set_ylabel('Nombre de bins')
+            ax.set_title('Solutions des heuristiques')
 
-        ax.legend()
-        plt.show()
-        st.pyplot()
+            ax.set_xticks(x)  # This ensures we have one tick per year, otherwise we get fewer
+            ax.set_xticklabels(instances.astype(str).values, rotation='vertical')
+            st.set_option('deprecation.showPyplotGlobalUse', False)
 
-        #####################2- comapraison temps d'execution heuristique
-        st.write(" ")
-        st.write(" ")
-        st.write("#### Comparaison des temps d'éxéctuion des heuristiques")
-        st.write(" ")
-        st.write(" ")
-        df = pd.read_csv("Temps_Exec_Heuristique.csv", encoding="ISO-8859-1")
-        instances = df['instances']
-        y = np.zeros((6, 12))
-        y[0] = df.iloc[:, 1]
-        y[1] = df.iloc[:, 2]
-        y[2] = df.iloc[:, 3]
-        y[3] = df.iloc[:, 4]
-        y[4] = df.iloc[:, 5]
-        y[5] = df.iloc[:, 6]
-        fig, ax = plt.subplots(figsize=(20, 5))
-        ax.plot(instances, y[0], label='FF')
-        ax.plot(instances, y[1], label='FFD')
-        ax.plot(instances, y[2], label='BF')
-        ax.plot(instances, y[3], label='BF')
-        ax.plot(instances, y[4], label='BF')
-        ax.plot(instances, y[5], label='BF')
+            ax.legend()
+            plt.show()
+            st.pyplot()
 
-        ax.legend()
-        plt.xlabel('Instances')
-        # naming the y-axis
-        plt.ylabel('Temps dexécution')
-        plt.legend()
+            #####################2- comapraison temps d'execution heuristique
+            st.write(" ")
+            st.write(" ")
+            st.write("#### Comparaison des temps d'éxéctuion des heuristiques")
+            st.write(" ")
+            st.write(" ")
+            df = pd.read_csv("Temps_Exec_Heuristique.csv", encoding="ISO-8859-1")
+            instances = df['instances']
+            y = np.zeros((6, 12))
+            y[0] = df.iloc[:, 1]
+            y[1] = df.iloc[:, 2]
+            y[2] = df.iloc[:, 3]
+            y[3] = df.iloc[:, 4]
+            y[4] = df.iloc[:, 5]
+            y[5] = df.iloc[:, 6]
+            fig, ax = plt.subplots(figsize=(20, 5))
+            ax.plot(instances, y[0], label='FF')
+            ax.plot(instances, y[1], label='FFD')
+            ax.plot(instances, y[2], label='BF')
+            ax.plot(instances, y[3], label='BF')
+            ax.plot(instances, y[4], label='BF')
+            ax.plot(instances, y[5], label='BF')
 
-        plt.show()
-        st.pyplot()
-        
-    ##################################3- Nb bins méta heuristiques
-    if comparaison_types=='Métaheuristique':
-        st.write(" ")
-        st.write(" ")
-        st.write("#### Comparaison des solutions des métaheuristiques et de la solution exacte")
-        st.write(" ")
-        st.write(" ")
-        col_names = ["AG", "RS", "SE"]
-        df = pd.read_csv("NB_bin_Metaheuristique.csv", encoding="ISO-8859-1")
+            ax.legend()
+            plt.xlabel('Instances')
+            # naming the y-axis
+            plt.ylabel('Temps dexécution')
+            plt.legend()
 
-        fig, ax = plt.subplots(figsize=(20, 5))
-        # The x-values of the bars.
-        instances = df['instances']
-        x = np.arange(len(instances))
+            plt.show()
+            st.pyplot()
 
-        # The width of the bars (1 = the whole width of the 'year group')
-        width = 0.10
+        ##################################3- Nb bins méta heuristiques
+        if comparaison_types=='Métaheuristique':
+            st.write(" ")
+            st.write(" ")
+            st.write("#### Comparaison des solutions des métaheuristiques et de la solution exacte")
+            st.write(" ")
+            st.write(" ")
+            col_names = ["AG", "RS", "SE"]
+            df = pd.read_csv("NB_bin_Metaheuristique.csv", encoding="ISO-8859-1")
 
-        # Create the bar charts!
-        ax.bar(x - 3 * width / 2, df['AG'], width, label='AG', color='#0343df')
-        ax.bar(x - width / 2, df['RS'], width, label='RS', color='#e50000')
-        ax.bar(x + width / 2, df['SE'], width, label='SE', color='#ffff14')
-        # Notice that features like labels and titles are added in separate steps
-        ax.set_ylabel('Nombre de bins')
-        ax.set_title('Solutions des métaheuristiques')
+            fig, ax = plt.subplots(figsize=(20, 5))
+            # The x-values of the bars.
+            instances = df['instances']
+            x = np.arange(len(instances))
 
-        ax.set_xticks(x)  # This ensures we have one tick per year, otherwise we get fewer
-        ax.set_xticklabels(instances.astype(str).values, rotation='vertical')
-        st.set_option('deprecation.showPyplotGlobalUse', False)
+            # The width of the bars (1 = the whole width of the 'year group')
+            width = 0.10
 
-        ax.legend()
-        plt.show()
-        st.pyplot()
-    ####################4- comapraison temps d'execution des métaheuristique
-        st.write(" ")
-        st.write(" ")
-        st.write("#### Comparaison des temps d'éxéctuion des métaheuristiques")
-        st.write(" ")
-        st.write(" ")
-        df = pd.read_csv("Temps_Exec_MetaHeuristique.csv", encoding="ISO-8859-1")
-        instances = df['instances']
-        y = np.zeros((2, 12))
-        y[0] = df.iloc[:, 1]
-        y[1] = df.iloc[:, 2]
-        fig, ax = plt.subplots(figsize=(20, 5))
-        ax.plot(instances, y[0], label='AG')
-        ax.plot(instances, y[1], label='RS')
+            # Create the bar charts!
+            ax.bar(x - 3 * width / 2, df['AG'], width, label='AG', color='#0343df')
+            ax.bar(x - width / 2, df['RS'], width, label='RS', color='#e50000')
+            ax.bar(x + width / 2, df['SE'], width, label='SE', color='#ffff14')
+            # Notice that features like labels and titles are added in separate steps
+            ax.set_ylabel('Nombre de bins')
+            ax.set_title('Solutions des métaheuristiques')
 
-        ax.legend()
-        plt.xlabel('Instances')
-        # naming the y-axis
-        plt.ylabel('Temps dexécution')
-        plt.legend()
+            ax.set_xticks(x)  # This ensures we have one tick per year, otherwise we get fewer
+            ax.set_xticklabels(instances.astype(str).values, rotation='vertical')
+            st.set_option('deprecation.showPyplotGlobalUse', False)
 
-        plt.show()
-        st.pyplot()
-    if comparaison_types=='Heuristiques Vs Métaheuristique':
-    ############# 5-  Comparaison de la solution des méthodes approchées
-        st.write(" ")
-        st.write(" ")
-        st.write("#### Comparaison des solutions des méthodes approchées et de la solution exacte")
-        st.write(" ")
-        st.write(" ")
-        col_names = ["BF","BFD","AG","Solution_Exacte"]
-        df = pd.read_csv("NB_bin_heuristique_metaheuristique.csv", encoding="ISO-8859-1")
+            ax.legend()
+            plt.show()
+            st.pyplot()
+        ####################4- comapraison temps d'execution des métaheuristique
+            st.write(" ")
+            st.write(" ")
+            st.write("#### Comparaison des temps d'éxéctuion des métaheuristiques")
+            st.write(" ")
+            st.write(" ")
+            df = pd.read_csv("Temps_Exec_MetaHeuristique.csv", encoding="ISO-8859-1")
+            instances = df['instances']
+            y = np.zeros((2, 12))
+            y[0] = df.iloc[:, 1]
+            y[1] = df.iloc[:, 2]
+            fig, ax = plt.subplots(figsize=(20, 5))
+            ax.plot(instances, y[0], label='AG')
+            ax.plot(instances, y[1], label='RS')
 
-        fig, ax = plt.subplots(figsize=(20, 5))
-        # The x-values of the bars.
-        instances = df['instances']
-        x = np.arange(len(instances))
+            ax.legend()
+            plt.xlabel('Instances')
+            # naming the y-axis
+            plt.ylabel('Temps dexécution')
+            plt.legend()
 
-        # The width of the bars (1 = the whole width of the 'year group')
-        width = 0.10
+            plt.show()
+            st.pyplot()
+        if comparaison_types=='Heuristiques Vs Métaheuristique':
+        ############# 5-  Comparaison de la solution des méthodes approchées
+            st.write(" ")
+            st.write(" ")
+            st.write("#### Comparaison des solutions des méthodes approchées et de la solution exacte")
+            st.write(" ")
+            st.write(" ")
+            col_names = ["BF","BFD","AG","Solution_Exacte"]
+            df = pd.read_csv("NB_bin_heuristique_metaheuristique.csv", encoding="ISO-8859-1")
 
-        # Create the bar charts!
-        ax.bar(x - 3 * width / 2, df['BF'], width, label='BF', color='#0343df')
-        ax.bar(x - width / 2, df['BFD'], width, label='BFD', color='#e50000')
-        ax.bar(x + width / 2, df['AG'], width, label='AG', color='#ffff14')
-        ax.bar(x + 3 * width / 2, df['SE'], width, label='SE', color='#929591')
-        # Notice that features like labels and titles are added in separate steps
-        ax.set_ylabel('Nombre de bins')
-        ax.set_title('Solutions des méthodes approchées')
+            fig, ax = plt.subplots(figsize=(20, 5))
+            # The x-values of the bars.
+            instances = df['instances']
+            x = np.arange(len(instances))
 
-        ax.set_xticks(x)  # This ensures we have one tick per year, otherwise we get fewer
-        ax.set_xticklabels(instances.astype(str).values, rotation='vertical')
-        st.set_option('deprecation.showPyplotGlobalUse', False)
+            # The width of the bars (1 = the whole width of the 'year group')
+            width = 0.10
 
-        ax.legend()
-        plt.show()
-        st.pyplot()
+            # Create the bar charts!
+            ax.bar(x - 3 * width / 2, df['BF'], width, label='BF', color='#0343df')
+            ax.bar(x - width / 2, df['BFD'], width, label='BFD', color='#e50000')
+            ax.bar(x + width / 2, df['AG'], width, label='AG', color='#ffff14')
+            ax.bar(x + 3 * width / 2, df['SE'], width, label='SE', color='#929591')
+            # Notice that features like labels and titles are added in separate steps
+            ax.set_ylabel('Nombre de bins')
+            ax.set_title('Solutions des méthodes approchées')
 
-#with open('historique.csv','w',newline='') as fichiercsv:
- #   writer=csv.writer(fichiercsv)
-  #  writer.writerow(['Type de l''instance','Instance', 'Algorithme', 'Nombre d''objets', 'Nombre de bins', 'Temps d''éxécution','Paramètres'])
+            ax.set_xticks(x)  # This ensures we have one tick per year, otherwise we get fewer
+            ax.set_xticklabels(instances.astype(str).values, rotation='vertical')
+            st.set_option('deprecation.showPyplotGlobalUse', False)
+
+            ax.legend()
+            plt.show()
+            st.pyplot()
+
+    #with open('historique.csv','w',newline='') as fichiercsv:
+     #   writer=csv.writer(fichiercsv)
+      #  writer.writerow(['Type de l''instance','Instance', 'Algorithme', 'Nombre d''objets', 'Nombre de bins', 'Temps d''éxécution','Paramètres'])
+###################################CLUSTERING###############################
+############ ==> Mettre le programme principal ici
+if Problem=='Clustering':
+    st.write(f"## Méthode : {methode}")
+    if methode == 'Recuit Simulé':
+        st.write(f"### Solution initiale : {init}")
+        if init=='K-means':
+            st.write("yo li jeunes")
+            ##ajouter algo du recuit simulé pour K-means
+        elif init=='Aléatoire':
+            st.write("saha saha")
+
+            ##ajouter algo du aléatoire
+
+    elif methode=='K-means':
+        st.write("coucou kawthar")
+
+        ##Executer le K-means
